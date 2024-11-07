@@ -1,0 +1,187 @@
+
+SQL*Plus: Release 21.0.0.0.0 - Production on Sun Oct 20 00:14:10 2024
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Sun Oct 20 2024 00:11:59 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> DROP TABLE Fine;
+DROP TABLE Fine
+           *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL> DROP TABLE Borrower;
+
+Table dropped.
+
+SQL> -- Create Borrower Table
+SQL> CREATE TABLE Borrower (
+  2      Roll_no NUMBER PRIMARY KEY,
+  3      Name VARCHAR2(100),
+  4      Date_of_Issue DATE,
+  5      Name_of_Book VARCHAR2(100),
+  6      Status CHAR(1) CHECK (Status IN ('I', 'R')) -- I for Issued, R for Returned
+  7  );
+
+Table created.
+
+SQL>
+SQL> -- Create Fine Table without Date column
+SQL> CREATE TABLE Fine (
+  2      Roll_no NUMBER,
+  3      Amt NUMBER,
+  4      FOREIGN KEY (Roll_no) REFERENCES Borrower(Roll_no)
+  5  );
+
+Table created.
+
+SQL>
+SQL> -- Insert sample data into Borrower Table
+SQL> INSERT INTO Borrower (Roll_no, Name, Date_of_Issue, Name_of_Book, Status)
+  2  VALUES (101, 'Alice', TO_DATE('2023-09-01', 'YYYY-MM-DD'), 'Database Systems', 'I');
+
+1 row created.
+
+SQL>
+SQL> INSERT INTO Borrower (Roll_no, Name, Date_of_Issue, Name_of_Book, Status)
+  2  VALUES (102, 'Bob', TO_DATE('2023-09-10', 'YYYY-MM-DD'), 'Operating Systems', 'I');
+
+1 row created.
+
+SQL>
+SQL> INSERT INTO Borrower (Roll_no, Name, Date_of_Issue, Name_of_Book, Status)
+  2  VALUES (103, 'Charlie', TO_DATE('2023-09-15', 'YYYY-MM-DD'), 'Computer Networks', 'I');
+
+1 row created.
+
+SQL>
+SQL> COMMIT;
+
+Commit complete.
+
+SQL>
+SQL> -- PL/SQL Block
+SQL> DECLARE
+  2      v_roll_no NUMBER;
+  3      v_book_name VARCHAR2(100);
+  4      v_days_diff NUMBER;
+  5      v_fine_amt NUMBER := 0;
+  6
+  7      -- Exception Handling
+  8      e_invalid_input EXCEPTION;
+  9
+ 10  BEGIN
+ 11      -- Accept Roll_no and Name_of_Book from user
+ 12      v_roll_no := &Roll_no; -- Prompt for Roll_no
+ 13      v_book_name := '&Book_name'; -- Prompt for Name of Book
+ 14
+ 15      -- Check if the borrower exists and get the date of issue
+ 16      DECLARE
+ 17          v_date_of_issue DATE;
+ 18          v_status CHAR(1);
+ 19      BEGIN
+ 20          SELECT Date_of_Issue, Status INTO v_date_of_issue, v_status
+ 21          FROM Borrower
+ 22          WHERE Roll_no = v_roll_no AND Name_of_Book = v_book_name;
+ 23
+ 24          -- Calculate number of days
+ 25          v_days_diff := TRUNC(SYSDATE) - v_date_of_issue;
+ 26
+ 27          -- Calculate fine based on days
+ 28          IF v_days_diff > 30 THEN
+ 29              v_fine_amt := (v_days_diff * 50);
+ 30          ELSIF v_days_diff BETWEEN 15 AND 30 THEN
+ 31              v_fine_amt := (v_days_diff * 5);
+ 32          END IF;
+ 33
+ 34          -- Update the status in Borrower table
+ 35          UPDATE Borrower
+ 36          SET Status = 'R'
+ 37          WHERE Roll_no = v_roll_no AND Name_of_Book = v_book_name;
+ 38
+ 39          -- If there is a fine, insert into Fine table
+ 40          IF v_fine_amt > 0 THEN
+ 41              INSERT INTO Fine (Roll_no, Amt)
+ 42              VALUES (v_roll_no, v_fine_amt);
+ 43          END IF;
+ 44
+ 45          COMMIT; -- Commit the transaction
+ 46
+ 47      EXCEPTION
+ 48          WHEN NO_DATA_FOUND THEN
+ 49              RAISE e_invalid_input; -- Raise an exception if no data found
+ 50          WHEN OTHERS THEN
+ 51              DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+ 52      END;
+ 53
+ 54      -- Output the fine amount
+ 55      IF v_fine_amt > 0 THEN
+ 56          DBMS_OUTPUT.PUT_LINE('Total fine for Roll No ' || v_roll_no || ' is: Rs. ' || v_fine_amt);
+ 57      ELSE
+ 58          DBMS_OUTPUT.PUT_LINE('No fine for Roll No ' || v_roll_no);
+ 59      END IF;
+ 60
+ 61  EXCEPTION
+ 62      WHEN e_invalid_input THEN
+ 63          DBMS_OUTPUT.PUT_LINE('Invalid Roll No or Book Name. Please check your input.');
+ 64
+ 65  END;
+ 66  /
+Enter value for roll_no: 101
+old  12:     v_roll_no := &Roll_no; -- Prompt for Roll_no
+new  12:     v_roll_no := 101; -- Prompt for Roll_no
+Enter value for book_name: Database Systems
+old  13:     v_book_name := '&Book_name'; -- Prompt for Name of Book
+new  13:     v_book_name := 'Database Systems'; -- Prompt for Name of Book
+
+PL/SQL procedure successfully completed.
+
+SQL> SET SERVEROUTPUT ON;
+SQL>
+SQL> DECLARE
+  2      CURSOR borrower_cursor IS
+  3          SELECT Roll_no, Name, Date_of_Issue, Name_of_Book, Status FROM Borrower;
+  4      v_borrower_row borrower_cursor%ROWTYPE;
+  5  BEGIN
+  6      DBMS_OUTPUT.PUT_LINE('Roll_no | Name               | Date_of_Issue | Name_of_Book       | Status');
+  7      DBMS_OUTPUT.PUT_LINE('--------|--------------------|----------------|---------------------|--------');
+  8
+  9      OPEN borrower_cursor;
+ 10      LOOP
+ 11          FETCH borrower_cursor INTO v_borrower_row;
+ 12          EXIT WHEN borrower_cursor%NOTFOUND;
+ 13          DBMS_OUTPUT.PUT_LINE(
+ 14              RPAD(v_borrower_row.Roll_no, 8) || ' | ' ||
+ 15              RPAD(v_borrower_row.Name, 18) || ' | ' ||
+ 16              TO_CHAR(v_borrower_row.Date_of_Issue, 'YYYY-MM-DD') || ' | ' ||
+ 17              RPAD(v_borrower_row.Name_of_Book, 20) || ' | ' ||
+ 18              v_borrower_row.Status
+ 19          );
+ 20      END LOOP;
+ 21      CLOSE borrower_cursor;
+ 22  END;
+ 23  /
+Roll_no | Name               | Date_of_Issue | Name_of_Book       | Status
+--------|--------------------|----------------|---------------------|--------
+101      | Alice              | 2023-09-01 | Database Systems     | R
+102      | Bob                | 2023-09-10 | Operating Systems    | I
+103      | Charlie            | 2023-09-15 | Computer Networks    | I
+
+PL/SQL procedure successfully completed.
+
+SQL> SELECT * FROM Fine;
+
+   ROLL_NO        AMT
+---------- ----------
+       101      20750
+
+SQL>

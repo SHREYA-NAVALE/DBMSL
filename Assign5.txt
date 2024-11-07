@@ -1,0 +1,63 @@
+BEGIN
+    EXECUTE IMMEDIATE 'CREATE TABLE areas (
+        radius NUMBER,
+        area NUMBER
+    )';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -955 THEN
+            DBMS_OUTPUT.PUT_LINE('Table already exists.');
+        ELSE
+            RAISE;
+        END IF;
+END;
+/
+
+-- PL/SQL block with FOR loop
+BEGIN
+    FOR v_radius IN 5..6 LOOP
+        
+        INSERT INTO areas (radius, area)
+        VALUES (v_radius, 3.14159 * v_radius * v_radius);
+    END LOOP;
+    COMMIT;
+END;
+/
+
+-- PL/SQL block with WHILE loop
+DECLARE
+    v_radius NUMBER := 7;
+BEGIN
+    WHILE v_radius <= 8 LOOP
+        
+        INSERT INTO areas (radius, area)
+        VALUES (v_radius, 3.14159 * v_radius * v_radius);
+        v_radius := v_radius + 1; -- Increment radius
+    END LOOP;
+    COMMIT;
+END;
+/
+
+-- PL/SQL block with simple LOOP
+DECLARE
+    v_radius NUMBER := 9;
+BEGIN
+    LOOP
+        -- Calculate the area
+        INSERT INTO areas (radius, area)
+        VALUES (v_radius, 3.14159 * v_radius * v_radius);
+        
+        EXIT WHEN v_radius >= 9; -- Exit condition
+        v_radius := v_radius + 1; -- Increment radius
+    END LOOP;
+    COMMIT;
+END;
+/
+
+
+BEGIN
+    FOR rec IN (SELECT radius, area FROM areas) LOOP
+        DBMS_OUTPUT.PUT_LINE('Radius: ' || rec.radius || ', Area: ' || rec.area);
+    END LOOP;
+END;
+/

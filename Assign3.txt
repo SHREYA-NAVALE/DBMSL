@@ -1,0 +1,58 @@
+
+SELECT m.Title, b.Domestic_sales, b.International_sales
+FROM Movies m
+JOIN Boxoffice b ON m.Id = b.Movie_id;
+
+
+SELECT m.Title, b.Domestic_sales, b.International_sales
+FROM Movies m
+JOIN Boxoffice b ON m.Id = b.Movie_id
+WHERE b.International_sales > b.Domestic_sales;
+
+
+SELECT m.Title, b.Rating
+FROM Movies m
+JOIN Boxoffice b ON m.Id = b.Movie_id
+ORDER BY b.Rating DESC;
+
+
+SELECT s.name AS Salesman, c.cust_name AS Customer, c.city
+FROM customer c
+JOIN salesman s ON c.salesman_id = s.salesman_id
+WHERE c.city = s.city;
+
+
+SELECT ord_no, purch_amt, cust_name, city
+FROM orders o
+JOIN customer c ON o.customer_id = c.customer_id
+WHERE purch_amt BETWEEN 500 AND 2000;
+
+
+SELECT c.cust_name AS Customer, c.city AS Customer_City, s.name AS Salesman, s.commission
+FROM customer c
+JOIN salesman s ON c.salesman_id = s.salesman_id;
+
+
+SELECT c.cust_name AS Customer_Name, c.city AS Customer_City, s.name AS Salesman, s.commission
+FROM salesman s
+JOIN customer c ON s.salesman_id = c.salesman_id
+WHERE s.commission > 0.12;
+
+
+SELECT c.cust_name, c.city, s.name AS Salesman, o.ord_no, o.purch_amt
+FROM customer c
+JOIN salesman s ON c.salesman_id = s.salesman_id
+JOIN orders o ON c.customer_id = o.customer_id;
+
+
+SELECT c.cust_name, c.city AS Customer_City, c.grade, s.name AS Salesman, s.city AS Salesman_City
+FROM customer c
+JOIN salesman s ON c.salesman_id = s.salesman_id
+ORDER BY c.customer_id ASC;
+
+
+SELECT s.name AS Salesman, COUNT(c.customer_id) AS Customer_Count
+FROM salesman s
+LEFT JOIN customer c ON s.salesman_id = c.salesman_id
+GROUP BY s.name
+ORDER BY s.name ASC;

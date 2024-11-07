@@ -1,0 +1,104 @@
+CREATE TABLE Persons (
+    id INT PRIMARY KEY,
+    name VARCHAR(30),
+    age INT NOT NULL,
+    salary INT
+);
+
+DESCRIBE Persons;
+
+INSERT INTO Persons (id, name, age, salary) 
+VALUES 
+(1, 'John', 30, 35000), 
+(2, 'Jane', 28, 27000), 
+(3, 'Tom', 40, 45000),
+(4, 'Alice', 25, 32000),
+(5, 'Bob', 35, 38000),
+(6, 'Charlie', 29, 41000),
+(7, 'David', 45, 50000),
+(8, 'Emma', 32, 29000),
+(9, 'Frank', 50, 47000),
+(10, 'Grace', 26, 26000);
+
+
+SELECT * FROM Persons;
+
+UPDATE Persons SET salary = 35000 WHERE id = 2;
+SELECT * FROM Persons;
+
+DELETE FROM Persons WHERE id = 2;
+SELECT * FROM Persons;
+
+SELECT id, name FROM Persons WHERE salary > 27000;
+
+SELECT * FROM Persons WHERE salary < 27000;
+
+SELECT * FROM Persons WHERE salary BETWEEN 27000 AND 40000;
+
+SELECT * FROM Persons WHERE salary > 27000 AND salary <= 40000;
+
+SELECT * FROM Persons LIMIT 3;
+
+SELECT * FROM Persons WHERE age = 35 LIMIT 3;
+
+SELECT * FROM Persons WHERE age > 26 AND salary < 35000;
+
+SELECT * FROM Persons WHERE age = 26 OR salary < 35000;
+
+SELECT * FROM Persons;
+
+ALTER TABLE Persons ADD city VARCHAR(100);
+SELECT * FROM Persons;
+
+UPDATE Persons SET city = 'Nasik' WHERE salary < 30000;
+SELECT * FROM Persons;
+
+UPDATE Persons SET city = 'Pune' WHERE salary BETWEEN 30000 AND 54000;
+SELECT * FROM Persons;
+
+UPDATE Persons SET city = 'Mumbai' WHERE salary > 55000;
+SELECT * FROM Persons;
+
+SELECT * FROM Persons WHERE city IN ('Pune', 'Nasik');
+
+SELECT * FROM Persons WHERE city NOT IN ('Pune', 'Nasik');
+
+SELECT * FROM Persons ORDER BY salary ASC;
+
+SELECT * FROM Persons ORDER BY salary DESC;
+
+SELECT * FROM Persons WHERE name LIKE 'R%';
+
+SELECT * FROM Persons WHERE name LIKE 'm%';
+
+SELECT * FROM Persons WHERE name LIKE '%a%';
+
+SELECT * FROM Persons WHERE name LIKE '_a%';
+
+SELECT * FROM Persons WHERE name LIKE 'A___%';
+
+SELECT * FROM Persons WHERE name LIKE 'S%m';
+
+DESCRIBE Persons;
+
+CREATE INDEX idx_city ON Persons (city);
+SELECT city, COUNT(*) FROM Persons GROUP BY city;
+
+CREATE VIEW Pune_Rich AS
+SELECT id, name, salary FROM Persons 
+WHERE city = 'Pune' AND salary > 40000;
+
+SELECT COUNT(*) AS total_persons, 
+       MAX(salary) AS max_salary, 
+       MIN(salary) AS min_salary, 
+       SUM(salary) AS total_salary, 
+       AVG(salary) AS avg_salary 
+FROM Persons;
+
+
+
+
+
+
+
+

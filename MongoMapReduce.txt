@@ -1,0 +1,108 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.
+
+PS C:\Users\Shreya S Navale> mongosh
+Current Mongosh Log ID: 670e2970264f48b1cbc4e49a
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.12
+Using MongoDB:          7.0.12
+Using Mongosh:          2.2.12
+mongosh 2.3.2 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-10-09T17:27:38.345+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs
+DailyDump          72.00 KiB
+Finance            72.00 KiB
+FinanceTracker     72.00 KiB
+admin              40.00 KiB
+college            72.00 KiB
+config             72.00 KiB
+customer           60.00 KiB
+local              72.00 KiB
+personal-finance  180.00 KiB
+test> use mapReduce
+switched to db mapReduce
+mapReduce> db.sales.insertMany([
+...     { product: "Laptop", quantity: 2, price: 1000 },
+...     { product: "Phone", quantity: 5, price: 600 },
+...     { product: "Tablet", quantity: 3, price: 800 },
+...     { product: "Laptop", quantity: 1, price: 1000 },
+...     { product: "Phone", quantity: 2, price: 600 }
+... ]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('670e29bc264f48b1cbc4e49b'),
+    '1': ObjectId('670e29bc264f48b1cbc4e49c'),
+    '2': ObjectId('670e29bc264f48b1cbc4e49d'),
+    '3': ObjectId('670e29bc264f48b1cbc4e49e'),
+    '4': ObjectId('670e29bc264f48b1cbc4e49f')
+  }
+}
+mapReduce> db.sales.find();
+[
+  {
+    _id: ObjectId('670e29bc264f48b1cbc4e49b'),
+    product: 'Laptop',
+    quantity: 2,
+    price: 1000
+  },
+  {
+    _id: ObjectId('670e29bc264f48b1cbc4e49c'),
+    product: 'Phone',
+    quantity: 5,
+    price: 600
+  },
+  {
+    _id: ObjectId('670e29bc264f48b1cbc4e49d'),
+    product: 'Tablet',
+    quantity: 3,
+    price: 800
+  },
+  {
+    _id: ObjectId('670e29bc264f48b1cbc4e49e'),
+    product: 'Laptop',
+    quantity: 1,
+    price: 1000
+  },
+  {
+    _id: ObjectId('670e29bc264f48b1cbc4e49f'),
+    product: 'Phone',
+    quantity: 2,
+    price: 600
+  }
+]
+mapReduce> var mapFunction = function() {
+...     emit(this.product, this.quantity * this.price);
+... };
+
+mapReduce> var reduceFunction = function(key, values) {
+...     return Array.sum(values);
+... };
+
+mapReduce> db.sales.mapReduce(
+...     mapFunction,
+...     reduceFunction,
+...     {
+...         out: "total_revenue_per_product"
+...     }
+... );
+DeprecationWarning: Collection.mapReduce() is deprecated. Use an aggregation instead.
+See https://docs.mongodb.com/manual/core/map-reduce for details.
+{ result: 'total_revenue_per_product', ok: 1 }
+mapReduce> db.total_revenue_per_product.find().pretty();
+[
+  { _id: 'Laptop', value: 3000 },
+  { _id: 'Tablet', value: 2400 },
+  { _id: 'Phone', value: 4200 }
+]
+mapReduce>

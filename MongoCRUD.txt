@@ -1,0 +1,254 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Install the latest PowerShell for new features and improvements! https://aka.ms/PSWindows
+
+Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.
+
+PS C:\Users\Shreya S Navale> mongosh
+Current Mongosh Log ID: 67137a1319db1e56fbc4e49a
+Connecting to:          mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.2.12
+Using MongoDB:          7.0.12
+Using Mongosh:          2.2.12
+mongosh 2.3.2 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-10-09T17:27:38.345+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> show dbs;
+DailyDump          72.00 KiB
+Demo               16.00 KiB
+Finance            72.00 KiB
+FinanceTracker     72.00 KiB
+admin              40.00 KiB
+college            72.00 KiB
+config            108.00 KiB
+customer           60.00 KiB
+local              72.00 KiB
+mapReduce          80.00 KiB
+myDatabase         16.00 KiB
+personal-finance  180.00 KiB
+test> use CRUD;
+switched to db CRUD
+CRUD> db.createCollection("users");
+{ ok: 1 }
+CRUD> db.users.insertOne({name:"Shreya Navale",age:21,email:"shreya@gmail.com",credit:20000,debit:5000});
+{
+  acknowledged: true,
+  insertedId: ObjectId('67137acc19db1e56fbc4e49b')
+}
+CRUD> db.users.find();
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya Navale',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  }
+]
+CRUD> db.insertMany([
+... {name : "Preet",
+... age : 30 ,
+... email : "preet@gmail.com",
+... credit : 500000,
+... debit : 10000},
+... {name : "Soniya",
+... age : 40,
+... email : "sonia@example.com",
+... credit : 100000,
+... debit : 4000}
+... ]);
+TypeError: db.insertMany is not a function
+CRUD> db.users.insertMany([ { name: "Preet", age: 30, email: "preet@gmail.com", credit: 500000, debit: 10000 }, { name: "Soniya", age: 40, email: "sonia@example.com", credit: 100000, debit: 4000 }] );
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('67137b8a19db1e56fbc4e49c'),
+    '1': ObjectId('67137b8a19db1e56fbc4e49d')
+  }
+}
+CRUD> db.users.find();
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya Navale',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49c'),
+    name: 'Preet',
+    age: 30,
+    email: 'preet@gmail.com',
+    credit: 500000,
+    debit: 10000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.find({name : "Shreya Navale"});
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya Navale',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  }
+]
+CRUD> db.users.find( {age : {$gt : 20} } );
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya Navale',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49c'),
+    name: 'Preet',
+    age: 30,
+    email: 'preet@gmail.com',
+    credit: 500000,
+    debit: 10000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.find( {age : {$gt : 30} } );
+[
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.find({ $or: [ {age : {$gt : 30} }, {credit : {$gt : 10000}} ]});
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya Navale',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49c'),
+    name: 'Preet',
+    age: 30,
+    email: 'preet@gmail.com',
+    credit: 500000,
+    debit: 10000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.find({ $and: [ {age : {$gt : 30} }, {credit : {$gt : 10000}} ]});
+[
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.updateOne({ name : "Shreya Navale"},{$set : {name : "Shreya"}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+CRUD> db.users.find().preety;
+
+CRUD> db.users.find();
+[
+  {
+    _id: ObjectId('67137acc19db1e56fbc4e49b'),
+    name: 'Shreya',
+    age: 21,
+    email: 'shreya@gmail.com',
+    credit: 20000,
+    debit: 5000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49c'),
+    name: 'Preet',
+    age: 30,
+    email: 'preet@gmail.com',
+    credit: 500000,
+    debit: 10000
+  },
+  {
+    _id: ObjectId('67137b8a19db1e56fbc4e49d'),
+    name: 'Soniya',
+    age: 40,
+    email: 'sonia@example.com',
+    credit: 100000,
+    debit: 4000
+  }
+]
+CRUD> db.users.updateMany({age : {$lt : 30}},{$set : {credit : 25000}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+CRUD> db.users.delete({name : "Soniya"});
+TypeError: db.users.delete is not a function
+CRUD> db.users.deleteOne({name : "Soniya"});
+{ acknowledged: true, deletedCount: 1 }
+CRUD> db.users.deleteMany({age : {$lt : 35}});
+{ acknowledged: true, deletedCount: 2 }
+CRUD> db.users.find();
+
+CRUD> db.users.save({
+... _id: ObjectId("614a1b1a1234567890123456"),
+... name : "Shreya",
+... age : 22});
+TypeError: db.users.save is not a function
+CRUD> db.users.save({
+...     _id: ObjectId("614a1b1a1234567890123456"), // If this _id exists, it will update the document
+...     name: "Shreya Navale",
+...     age: 23
+... })
+TypeError: db.users.save is not a function
+CRUD>

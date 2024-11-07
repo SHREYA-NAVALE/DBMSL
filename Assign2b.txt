@@ -1,0 +1,58 @@
+
+CREATE TABLE Employee_Details (
+    EMPNO INT(4) NOT NULL,
+    ENAME VARCHAR(10),
+    DATE_OF_JOINING DATE,
+    SAL DECIMAL(7,2),
+    DEPTNAME VARCHAR(10),
+    PRIMARY KEY (EMPNO)
+);
+
+DESCRIBE Employee_Details;
+
+INSERT INTO Employee_Details (EMPNO, ENAME, DATE_OF_JOINING, SAL, DEPTNAME)
+VALUES 
+(1, 'John', '2010-01-15', 50000, 'HR'),
+(2, 'Jane', '2005-03-22', 45000, 'Finance'),
+(3, 'Alice', '2000-07-30', 60000, 'IT'),
+(4, 'Bob', '1995-06-20', 55000, 'Marketing'),
+(5, 'Tom', '1981-12-10', 30000, 'Finance'),
+(6, 'Jerry', '2020-05-25', 40000, 'HR'),
+(7, 'Raj', '2018-11-01', 47000, 'Sales'),
+(8, 'Sara', '1985-04-09', 52000, 'IT'),
+(9, 'Mike', '2003-08-19', 47000, 'IT'),
+(10, 'Rita', '1999-10-05', 65000, 'Sales'),
+(11, 'Paul', '2004-02-17', 51000, 'HR'),
+(12, 'Lisa', '1980-01-13', 33000, 'Finance'),
+(13, 'Nina', '2011-09-24', 49000, 'Sales'),
+(14, 'Zack', '1998-12-22', 59000, 'Finance'),
+(15, 'Phil', '1981-08-30', 45000, 'HR');
+
+SELECT * FROM Employee_Details;
+SELECT DISTINCT DEPTNAME FROM Employee_Details;
+SELECT * FROM Employee_Details ORDER BY SAL ASC;
+SELECT * FROM Employee_Details WHERE DATE_OF_JOINING < '1981-01-01';
+SELECT * FROM Employee_Details WHERE YEAR(DATE_OF_JOINING) = 1981;
+SELECT AVG(SAL) AS avg_salary FROM Employee_Details;
+SELECT MIN(SAL) AS min_salary, MAX(SAL) AS max_salary FROM Employee_Details;
+SELECT * FROM Employee_Details WHERE ENAME LIKE 'P%';
+SELECT ENAME FROM Employee_Details WHERE ENAME LIKE '%a';
+
+SELECT MAX(SAL) AS second_highest_salary 
+FROM Employee_Details 
+WHERE SAL < (SELECT MAX(SAL) FROM Employee_Details);
+
+ SELECT DEPTNAME, GROUP_CONCAT(ENAME) AS Employees
+    -> FROM Employee_Details
+    -> WHERE SAL >= 10000
+    -> GROUP BY DEPTNAME;
+
+ SELECT DEPTNAME , MAX(SAL) AS MAXSALARY FROM Employee_Details GROUP BY DEPTNAME;
+
+UPDATE Employee_Details 
+SET SAL = SAL * 1.10;
+
+SELECT ENAME AS Employee_Name, SAL AS Salary FROM Employee_Details;
+
+
+
